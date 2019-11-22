@@ -1,0 +1,22 @@
+version: '2'
+services:
+    app:
+        container_name: clever-demo
+        build:
+            context: ./
+            dockerfile: deploy/app.dockerfile
+        volumes:
+            - ./src:/var/www
+        environment:
+            - "DB_PORT=3306"
+            - "DB_HOST=database"
+            - "REDIS_PORT=6379"
+            - "REDIS_HOST=cache"
+    composer:
+        container_name: clever-demo-composer
+        restart: 'no'
+        image: "composer"
+        command: install
+        working_dir: /app
+        volumes:
+        - ./src:/app
