@@ -147,6 +147,10 @@ class CleverApiRequestor
     $opts[CURLOPT_CONNECTTIMEOUT] = 30;
     $opts[CURLOPT_TIMEOUT] = 80;
     $opts[CURLOPT_RETURNTRANSFER] = true;
+    
+    // added to track response headers
+    $opts[CURLOPT_HEADER] = 1;
+
     if (isset($auth['token'])) {
         array_push($headers, 'Authorization: Bearer ' . $auth['token']);
     } else if (isset($auth['apiKey'])) {
@@ -177,6 +181,14 @@ class CleverApiRequestor
       $message = curl_error($curl);
       curl_close($curl);
       $this->handleCurlError($errno, $message, $rcode);
+    }
+
+    $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+    $headers = substr($rbody, 0, $headerSize);
+    $rbody = substr($rbody, $headerSize);
+
+    if (json_decode($rbody) === null) {
+      Log::info($headers);
     }
 
     curl_close($curl);

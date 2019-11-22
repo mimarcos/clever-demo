@@ -33,7 +33,7 @@ class SyncSchoolsCommand extends Command
         $stamp = date('Y-m-d H:i:s');
         $page++;
         Log::info("Making Clever call for student details [starting: {$lastId}, page: {$page}]... ");
-        $students = $district->students(array('starting_after' => $lastId));
+        $students = $district->students(array('limit' => 100, 'starting_after' => $lastId));
         
         if ( !empty($students) ) {
           Log::info('...students retrieved ['.count($students).']');
